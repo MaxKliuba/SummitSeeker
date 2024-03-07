@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.smte.skeererer.R
 import com.smte.skeererer.core.palameciaTitlingFontFamily
+import com.smte.skeererer.feature.playgame.presentation.components.GameMenuButton
 
 @Composable
 fun MenuScreen(
@@ -26,14 +27,14 @@ fun MenuScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.align(Alignment.Center)
+            modifier = Modifier.fillMaxSize()
         ) {
             Text(
                 text = stringResource(id = R.string.menu_title),
                 fontFamily = palameciaTitlingFontFamily,
-                fontSize = 60.sp,
-                lineHeight = TextUnit(60f, TextUnitType.Sp),
-                modifier = Modifier.padding(bottom = 60.dp)
+                fontSize = 64.sp,
+                lineHeight = TextUnit(64f, TextUnitType.Sp),
+                modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 64.dp)
             )
 
             GameMenuButton(

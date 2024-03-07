@@ -1,4 +1,4 @@
-package com.smte.skeererer.feature.playgame.presentation.menu
+package com.smte.skeererer.feature.playgame.presentation.components
 
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -20,7 +20,7 @@ fun GameMenuButton(
         Text(
             text = text,
             fontFamily = palameciaTitlingFontFamily,
-            fontSize = 24.sp,
+            fontSize = 32.sp,
         )
     }
 }

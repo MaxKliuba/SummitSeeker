@@ -5,7 +5,10 @@ import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
@@ -18,6 +21,8 @@ import androidx.navigation.compose.rememberNavController
 import com.smte.skeererer.core.Screen
 import com.smte.skeererer.feature.playgame.presentation.menu.MenuScreen
 import com.smte.skeererer.feature.playgame.presentation.play.PlayScreen
+import com.smte.skeererer.feature.playgame.presentation.ratings.RatingsScreen
+import com.smte.skeererer.feature.playgame.presentation.settings.SettingsScreen
 import com.smte.skeererer.ui.theme.SummitSeekerTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -39,6 +44,7 @@ class MainActivity : ComponentActivity() {
                     NavHost(
                         navController = navController,
                         startDestination = Screen.Menu.route,
+                        modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing)
                     ) {
                         composable(route = Screen.Menu.route) {
                             MenuScreen(
@@ -54,11 +60,15 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable(route = Screen.Settings.route) {
-                            println("SETTINGS")
+                            SettingsScreen(
+                                onNavigateUp = navController::navigateUp
+                            )
                         }
 
                         composable(route = Screen.Ratings.route) {
-                            println("RATINGS")
+                            RatingsScreen(
+                                onNavigateUp = navController::navigateUp
+                            )
                         }
                     }
                 }
