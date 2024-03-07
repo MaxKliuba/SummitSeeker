@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Summit Seeker</string>
+
+    <string name="menu_title">Summit\nSeeker</string>
+    <string name="play_button">Play</string>
+    <string name="settings_button">Settings</string>
+    <string name="ratings_button">Ratings</string>
+    <string name="quit_button">Quit</string>
+</resources>
