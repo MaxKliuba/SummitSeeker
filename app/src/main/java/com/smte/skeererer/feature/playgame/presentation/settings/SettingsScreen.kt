@@ -1,7 +1,9 @@
 package com.smte.skeererer.feature.playgame.presentation.settings
 
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -10,29 +12,42 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.smte.skeererer.R
-import com.smte.skeererer.core.palameciaTitlingFontFamily
-import com.smte.skeererer.feature.playgame.presentation.components.GameMenuButton
+import com.smte.skeererer.core.gillSansBoldFontFamily
+import com.smte.skeererer.feature.playgame.presentation.components.BackIconButton
+import com.smte.skeererer.feature.playgame.presentation.components.MenuBackgroundColumn
+import com.smte.skeererer.feature.playgame.presentation.components.OverlayComponent
+import com.smte.skeererer.feature.playgame.presentation.components.TitleComponent
 
 @Composable
 fun SettingsScreen(
     onNavigateUp: () -> Unit,
 ) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
+    MenuBackgroundColumn(contentModifier = Modifier.padding(24.dp)) {
+        BackIconButton(onClick = onNavigateUp)
+
+        TitleComponent(
             text = stringResource(R.string.settings_title),
-            fontFamily = palameciaTitlingFontFamily,
-            fontSize = 56.sp,
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 16.dp)
+            modifier = Modifier.align(Alignment.CenterHorizontally)
         )
 
-        Column(modifier = Modifier.weight(1f)) {
-            // TODO
+        OverlayComponent {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.sound_settings_title),
+                    fontFamily = gillSansBoldFontFamily,
+                    fontSize = 28.sp,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.weight(1f)
+                )
+
+                Switch(
+                    checked = true,
+                    onCheckedChange = {},
+                )
+            }
         }
-
-        GameMenuButton(
-            text = stringResource(R.string.back_button),
-            onClick = onNavigateUp,
-            modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 48.dp)
-        )
     }
 }

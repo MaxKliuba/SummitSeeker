@@ -1,14 +1,13 @@
 package com.smte.skeererer
 
+import android.annotation.SuppressLint
+import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
@@ -26,8 +25,10 @@ import com.smte.skeererer.feature.playgame.presentation.settings.SettingsScreen
 import com.smte.skeererer.ui.theme.SummitSeekerTheme
 import dagger.hilt.android.AndroidEntryPoint
 
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -44,9 +45,9 @@ class MainActivity : ComponentActivity() {
                     NavHost(
                         navController = navController,
                         startDestination = Screen.Menu.route,
-                        modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing)
                     ) {
                         composable(route = Screen.Menu.route) {
+                            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
                             MenuScreen(
                                 onNavigateToPlay = { navController.navigate(Screen.Play.route) },
                                 onNavigateToSettings = { navController.navigate(Screen.Settings.route) },
@@ -56,16 +57,22 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable(route = Screen.Play.route) {
-                            PlayScreen()
+                            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                            PlayScreen(
+                                onNavigateUp = navController::navigateUp,
+                                onNavigateToSettings = { navController.navigate(Screen.Settings.route) },
+                            )
                         }
 
                         composable(route = Screen.Settings.route) {
+                            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
                             SettingsScreen(
                                 onNavigateUp = navController::navigateUp
                             )
                         }
 
                         composable(route = Screen.Ratings.route) {
+                            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
                             RatingsScreen(
                                 onNavigateUp = navController::navigateUp
                             )

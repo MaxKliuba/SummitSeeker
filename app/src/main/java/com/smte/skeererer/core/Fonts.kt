@@ -4,4 +4,4 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import com.smte.skeererer.R
 
-val palameciaTitlingFontFamily = FontFamily(Font(R.font.palamecia_titling))
+val gillSansBoldFontFamily = FontFamily(Font(R.font.gill_sans_bold))

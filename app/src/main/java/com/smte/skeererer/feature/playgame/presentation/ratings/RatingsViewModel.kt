@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.smte.skeererer.core.update
-import com.smte.skeererer.feature.playgame.domain.repository.GameScoreRepository
 import com.smte.skeererer.feature.playgame.domain.usecase.GetScores
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
@@ -16,7 +15,6 @@ import javax.inject.Inject
 @HiltViewModel
 class RatingsViewModel @Inject constructor(
     private val getScoresUseCase: GetScores,
-    private val gameScoreRepository: GameScoreRepository,
 ) : ViewModel() {
 
     private val _uiState = mutableStateOf(
