@@ -5,18 +5,25 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.smte.skeererer.core.update
 import com.smte.skeererer.feature.playgame.data.repository.LocalPlayGameController
+import com.smte.skeererer.feature.playgame.domain.model.GameScore
+import com.smte.skeererer.feature.playgame.domain.repository.GameScoreRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
-class PlayViewModel @Inject constructor() : ViewModel() {
+class PlayViewModel @Inject constructor(
+    private val scoreRepository: GameScoreRepository,
+) : ViewModel() {
     private val playGameController = LocalPlayGameController()
 
-    private val _uiState: MutableState<PlayUiState> = mutableStateOf(PlayUiState.Start)
+    private val _uiState: MutableState<PlayUiState> = mutableStateOf(PlayUiState(gameState = null))
     val uiState: State<PlayUiState> = _uiState
 
     fun applyJump() {
@@ -24,40 +31,34 @@ class PlayViewModel @Inject constructor() : ViewModel() {
     }
 
     fun pauseGame() {
-        _uiState.value = PlayUiState.Pause
         playGameController.pause()
     }
 
-    fun restartGame() {
-        _uiState.value = PlayUiState.Start
+    fun resumeGame() {
+        playGameController.resume()
     }
 
     fun playGame(fieldWidth: Int, fieldHeight: Int) {
-        when (_uiState.value) {
-            is PlayUiState.Start -> {
-                playGameController.play(fieldWidth, fieldHeight)
-                    .onEach { gameState ->
-                        _uiState.value = if (gameState.isRunning) {
-                            PlayUiState.Play(
-                                fieldWidth = fieldWidth,
-                                fieldHeight = fieldHeight,
-                                gameState = gameState,
-                            )
-                        } else {
-                            PlayUiState.GameOver
-                        }
-                    }
-                    .catch { e ->
-                        e.printStackTrace()
-                    }
-                    .launchIn(viewModelScope)
+        playGameController.play(fieldWidth, fieldHeight)
+            .onEach { gameState ->
+                _uiState.update { it.copy(gameState = gameState) }
             }
-
-            is PlayUiState.Pause -> {
-                playGameController.resume()
+            .catch { e ->
+                e.printStackTrace()
             }
+            .launchIn(viewModelScope)
+    }
 
-            else -> {}
+    fun saveScore() {
+        _uiState.value.gameState?.score?.let { score ->
+            viewModelScope.launch {
+                scoreRepository.addScore(
+                    GameScore(
+                        score = score,
+                        timestamp = Date().time
+                    )
+                )
+            }
         }
     }
 }

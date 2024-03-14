@@ -31,7 +31,7 @@ fun RatingsScreen(
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
 
-        OverlayComponent {
+        OverlayComponent(modifier = Modifier.fillMaxWidth()) {
             ScoreList(
                 scores = state.scores,
                 modifier = Modifier.fillMaxWidth()

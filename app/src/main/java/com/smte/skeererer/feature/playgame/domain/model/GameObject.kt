@@ -6,21 +6,6 @@ abstract class GameObject(
     val sizeX: Int,
     val sizeY: Int,
 ) {
-    fun hasCollisionWith(other: GameObject): Boolean {
-        val minX1 = x
-        val maxX1 = x + sizeX
-        val minY1 = y
-        val maxY1 = y + sizeY
-
-        val minX2 = other.x
-        val maxX2 = other.x + other.sizeX
-        val minY2 = other.y
-        val maxY2 = other.y + other.sizeY
-
-        return !(minX1 > maxX2 || maxX1 < minX2 ||
-                minY1 > maxY2 || maxY1 < minY2)
-    }
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

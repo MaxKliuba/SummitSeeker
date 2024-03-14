@@ -1,6 +1,7 @@
 package com.smte.skeererer.feature.playgame.presentation.settings
 
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
@@ -30,7 +31,7 @@ fun SettingsScreen(
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
 
-        OverlayComponent {
+        OverlayComponent(modifier = Modifier.fillMaxWidth()) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(16.dp)

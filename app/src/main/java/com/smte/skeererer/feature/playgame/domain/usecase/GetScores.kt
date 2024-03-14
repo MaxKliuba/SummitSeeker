@@ -9,7 +9,7 @@ import javax.inject.Inject
 class GetScores @Inject constructor(
     private val gameScoreRepository: GameScoreRepository
 ) {
-    operator fun invoke(limit: Int = 10): Flow<List<GameScore>> =
+    operator fun invoke(limit: Int = 9): Flow<List<GameScore>> =
         gameScoreRepository.getScores()
             .map { scores ->
                 scores.sortedByDescending { it.score }
