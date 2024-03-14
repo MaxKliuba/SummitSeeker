@@ -9,6 +9,7 @@ import com.smte.skeererer.core.update
 import com.smte.skeererer.feature.playgame.data.repository.LocalPlayGameController
 import com.smte.skeererer.feature.playgame.domain.model.GameScore
 import com.smte.skeererer.feature.playgame.domain.repository.GameScoreRepository
+import com.smte.skeererer.feature.playgame.domain.repository.SoundRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
@@ -20,8 +21,9 @@ import javax.inject.Inject
 @HiltViewModel
 class PlayViewModel @Inject constructor(
     private val scoreRepository: GameScoreRepository,
+    private val soundRepository: SoundRepository,
 ) : ViewModel() {
-    private val playGameController = LocalPlayGameController()
+    private val playGameController = LocalPlayGameController(soundRepository)
 
     private val _uiState: MutableState<PlayUiState> = mutableStateOf(PlayUiState(gameState = null))
     val uiState: State<PlayUiState> = _uiState

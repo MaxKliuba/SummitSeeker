@@ -5,15 +5,17 @@ import com.smte.skeererer.feature.playgame.domain.model.ArtifactType
 import com.smte.skeererer.feature.playgame.domain.model.GameState
 import com.smte.skeererer.feature.playgame.domain.model.Player
 import com.smte.skeererer.feature.playgame.domain.repository.PlayGameController
+import com.smte.skeererer.feature.playgame.domain.repository.SoundRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import javax.inject.Inject
 import kotlin.math.max
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
 
-class LocalPlayGameController @Inject constructor() : PlayGameController {
+class LocalPlayGameController(
+    private val soundRepository: SoundRepository,
+) : PlayGameController {
     private var pause: Boolean = false
     private var playerJumpCounter: Int = 0
 
@@ -87,7 +89,11 @@ class LocalPlayGameController @Inject constructor() : PlayGameController {
                 }
 
                 val score = artifacts.filter { artifact ->
-                    player.hasCollisionWith(artifact)
+                    player.hasCollisionWith(artifact).also { hasCollision ->
+                        if (hasCollision) {
+                            soundRepository.playSuccessSound()
+                        }
+                    }
                 }.sumOf { artifact ->
                     artifact.type.score
                 }
@@ -133,6 +139,7 @@ class LocalPlayGameController @Inject constructor() : PlayGameController {
 
     override fun applyPlayerJump() {
         if (playerJumpCounter == 0) {
+            soundRepository.playJumpSound()
             playerJumpCounter = JUMP_DURATION + AFTER_JUMP_DELAY
         }
     }

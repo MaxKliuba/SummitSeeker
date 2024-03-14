@@ -7,11 +7,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.smte.skeererer.R
 import com.smte.skeererer.core.gillSansBoldFontFamily
 import com.smte.skeererer.feature.playgame.presentation.components.BackIconButton
@@ -22,7 +24,10 @@ import com.smte.skeererer.feature.playgame.presentation.components.TitleComponen
 @Composable
 fun SettingsScreen(
     onNavigateUp: () -> Unit,
+    viewModel: SettingsViewModel = hiltViewModel()
 ) {
+    val state by viewModel.uiState
+
     MenuBackgroundColumn(contentModifier = Modifier.padding(24.dp)) {
         BackIconButton(onClick = onNavigateUp)
 
@@ -45,8 +50,8 @@ fun SettingsScreen(
                 )
 
                 Switch(
-                    checked = true,
-                    onCheckedChange = {},
+                    checked = state.soundState,
+                    onCheckedChange = viewModel::changeSoundState,
                 )
             }
         }
