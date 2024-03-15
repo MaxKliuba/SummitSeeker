@@ -3,7 +3,7 @@ package com.smte.skeererer.feature.playgame.presentation.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -35,8 +35,8 @@ fun MenuButton(
         Image(
             painter = painterResource(id = R.drawable.button_background),
             contentDescription = null,
-            contentScale = ContentScale.FillWidth,
-            modifier = Modifier.width(300.dp)
+            contentScale = ContentScale.FillHeight,
+            modifier = Modifier.height(80.dp)
         )
 
         Text(

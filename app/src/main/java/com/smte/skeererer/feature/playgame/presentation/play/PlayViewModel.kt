@@ -20,8 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PlayViewModel @Inject constructor(
+    soundRepository: SoundRepository,
     private val scoreRepository: GameScoreRepository,
-    private val soundRepository: SoundRepository,
 ) : ViewModel() {
     private val playGameController = LocalPlayGameController(soundRepository)
 

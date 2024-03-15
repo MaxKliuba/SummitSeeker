@@ -6,9 +6,12 @@ import com.smte.skeererer.feature.playgame.domain.model.GameState
 import com.smte.skeererer.feature.playgame.domain.model.Player
 import com.smte.skeererer.feature.playgame.domain.repository.PlayGameController
 import com.smte.skeererer.feature.playgame.domain.repository.SoundRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import java.util.UUID
 import kotlin.math.max
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
@@ -23,8 +26,8 @@ class LocalPlayGameController(
         resume()
         playerJumpCounter = 0
 
-        val delay = 10
-        val pixelSpeed = 10
+        val delay = 5
+        val pixelSpeed = 5
         val stepCount = 3
         val step = fieldHeight / stepCount
 
@@ -35,7 +38,6 @@ class LocalPlayGameController(
         val artifactSize = step / 2
         val artifactLowY = playerInitialY + artifactSize / 2
         val artifactHighY = step + artifactSize / 2
-        val minArtifactsDistance = pixelSpeed * 5
 
         var gameState = GameState(
             isRunning = true,
@@ -43,6 +45,7 @@ class LocalPlayGameController(
             backgroundOffset2 = fieldWidth,
             score = 0,
             player = Player(
+                id = UUID.randomUUID(),
                 x = playerX,
                 y = playerInitialY,
                 sizeX = playerSizeX,
@@ -50,6 +53,7 @@ class LocalPlayGameController(
             ),
             artifacts = listOf(
                 Artifact(
+                    id = UUID.randomUUID(),
                     x = fieldWidth,
                     y = artifactLowY,
                     sizeX = (step / 2),
@@ -76,9 +80,10 @@ class LocalPlayGameController(
                     .toMutableList()
 
                 artifacts.maxByOrNull { it.x }?.let { lastArtifact ->
-                    val probability = Random.nextInt(20) == 0
-                    if (probability && lastArtifact.x + lastArtifact.sizeX < fieldWidth - minArtifactsDistance) {
+                    val probability = Random.nextInt(200 / pixelSpeed) == 0
+                    if (probability && lastArtifact.x + lastArtifact.sizeX < fieldWidth - artifactSize) {
                         artifacts += Artifact(
+                            id = UUID.randomUUID(),
                             x = fieldWidth,
                             y = if (Random.nextInt(2) == 0) artifactLowY else artifactHighY,
                             sizeX = (step / 2),
@@ -127,7 +132,7 @@ class LocalPlayGameController(
             emit(gameState)
             delay(delay.milliseconds)
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
     override fun pause() {
         pause = true

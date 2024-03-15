@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
@@ -51,7 +52,8 @@ fun PlayScreen(
                 viewModel.playGame(it.size.width, it.size.height)
             }
         }
-    ) {
+    )
+    {
         state.gameState?.let { gameState ->
             Box(
                 modifier = Modifier
@@ -63,10 +65,14 @@ fun PlayScreen(
                     }
             ) {
                 gameState.artifacts.forEach { artifact ->
-                    ArtifactComponent(artifact = artifact)
+                    key(artifact.id) {
+                        ArtifactComponent(artifact = artifact)
+                    }
                 }
 
-                PlayerComponent(player = gameState.player)
+                key(gameState.player.id) {
+                    PlayerComponent(player = gameState.player)
+                }
             }
 
             Text(
