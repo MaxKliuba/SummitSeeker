@@ -1,21 +1,18 @@
 package com.smte.skeererer.feature.playgame.domain.model
 
-import java.util.UUID
-
 class Player(
-    id: UUID,
     x: Int,
     y: Int,
     sizeX: Int,
     sizeY: Int,
-) : GameObject(id, x, y, sizeX, sizeY) {
+) : GameObject(x, y, sizeX, sizeY) {
 
     fun copy(
         x: Int = this.x,
         y: Int = this.y,
         sizeX: Int = this.sizeX,
         sizeY: Int = this.sizeY,
-    ): Player = Player(this.id, x, y, sizeX, sizeY)
+    ): Player = Player(x, y, sizeX, sizeY)
 
     fun hasCollisionWith(other: GameObject): Boolean {
         val minX1 = x + sizeX

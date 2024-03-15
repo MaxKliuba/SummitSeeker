@@ -1,9 +1,6 @@
 package com.smte.skeererer.feature.playgame.domain.model
 
-import java.util.UUID
-
 abstract class GameObject(
-    val id: UUID,
     val x: Int,
     val y: Int,
     val sizeX: Int,
@@ -15,7 +12,6 @@ abstract class GameObject(
 
         other as GameObject
 
-        if (id != other.id) return false
         if (x != other.x) return false
         if (y != other.y) return false
         if (sizeX != other.sizeX) return false
@@ -23,8 +19,7 @@ abstract class GameObject(
     }
 
     override fun hashCode(): Int {
-        var result = id.hashCode()
-        result = 31 * result + x
+        var result = x
         result = 31 * result + y
         result = 31 * result + sizeX
         result = 31 * result + sizeY

@@ -1,17 +1,16 @@
 package com.smte.skeererer.feature.playgame.domain.model
 
-class Artifact(
-    x: Int,
-    y: Int,
+class GameBackground(
+    offset1: Int,
+    offset2: Int,
     sizeX: Int,
     sizeY: Int,
-    val type: ArtifactType,
-) : GameObject(x, y, sizeX, sizeY) {
+) : GameObject(offset1, offset2, sizeX, sizeY) {
 
     fun copy(
         x: Int = this.x,
         y: Int = this.y,
         sizeX: Int = this.sizeX,
         sizeY: Int = this.sizeY,
-    ): Artifact = Artifact(x, y, sizeX, sizeY, this.type)
+    ): GameBackground = GameBackground(x, y, sizeX, sizeY)
 }

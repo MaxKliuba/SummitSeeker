@@ -2,6 +2,7 @@ package com.smte.skeererer.feature.playgame.data.repository
 
 import com.smte.skeererer.feature.playgame.domain.model.Artifact
 import com.smte.skeererer.feature.playgame.domain.model.ArtifactType
+import com.smte.skeererer.feature.playgame.domain.model.GameBackground
 import com.smte.skeererer.feature.playgame.domain.model.GameState
 import com.smte.skeererer.feature.playgame.domain.model.Player
 import com.smte.skeererer.feature.playgame.domain.repository.PlayGameController
@@ -11,7 +12,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import java.util.UUID
 import kotlin.math.max
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
@@ -42,71 +42,65 @@ class LocalPlayGameController(
 
         var gameState = GameState(
             isRunning = true,
-            backgroundOffset1 = 0,
-            backgroundOffset2 = fieldWidth,
+            background = GameBackground(
+                offset1 = 0,
+                offset2 = fieldWidth,
+                sizeX = fieldWidth,
+                sizeY = fieldHeight
+            ),
             score = 0,
             player = Player(
-                id = UUID.randomUUID(),
                 x = playerX,
                 y = playerInitialY,
                 sizeX = playerSizeX,
                 sizeY = step - 1,
             ),
-            artifacts = listOf(
-                Artifact(
-                    id = UUID.randomUUID(),
-                    x = fieldWidth,
-                    y = artifactLowY,
-                    sizeX = (step / 2),
-                    sizeY = (step / 2),
-                    type = ArtifactType.COIN,
-                )
-            ),
+            artifacts = emptyList(),
         )
 
         while (true) {
             gameState = if (pause) {
                 gameState.copy(isRunning = false)
             } else {
-                val player = if (playerJumpCounter >= AFTER_JUMP_DELAY) {
-                    gameState.player.copy(y = step)
-                } else {
-                    gameState.player.copy(y = playerInitialY)
-                }
+                val player =
+                    if (playerJumpCounter >= AFTER_JUMP_DELAY && gameState.player.y != step) {
+                        gameState.player.copy(y = step)
+                    } else if (playerJumpCounter == 0 && gameState.player.y != playerInitialY) {
+                        gameState.player.copy(y = playerInitialY)
+                    } else gameState.player
 
                 val artifacts = gameState.artifacts.map { artifact ->
                     artifact.copy(x = artifact.x - pixelSpeed)
-                }
-                    .filter { it.x >= -it.sizeX * 2 }
-                    .toMutableList()
+                }.toMutableList()
 
-                artifacts.maxByOrNull { it.x }?.let { lastArtifact ->
-                    val probability = Random.nextInt(200 / pixelSpeed) == 0
-                    if (probability && lastArtifact.x + lastArtifact.sizeX < fieldWidth - artifactSize) {
-                        artifacts += Artifact(
-                            id = UUID.randomUUID(),
-                            x = fieldWidth,
-                            y = if (Random.nextInt(2) == 0) artifactLowY else artifactHighY,
-                            sizeX = (step / 2),
-                            sizeY = (step / 2),
-                            type = ArtifactType.entries[Random.nextInt(ArtifactType.entries.size)],
-                        )
-                    }
+                val lastArtifact = artifacts.maxByOrNull { it.x }
+
+                if ((lastArtifact != null
+                            && Random.nextInt(200 / pixelSpeed) == 0
+                            && lastArtifact.x + lastArtifact.sizeX < fieldWidth - artifactSize)
+                    || lastArtifact == null
+                ) {
+                    artifacts += Artifact(
+                        x = fieldWidth,
+                        y = if (Random.nextInt(2) == 0) artifactLowY else artifactHighY,
+                        sizeX = (step / 2),
+                        sizeY = (step / 2),
+                        type = ArtifactType.entries[Random.nextInt(ArtifactType.entries.size)],
+                    )
                 }
 
-                val score = artifacts.filter { artifact ->
-                    player.hasCollisionWith(artifact).also { hasCollision ->
-                        if (hasCollision) {
-                            soundRepository.playSuccessSound()
-                        }
-                    }
-                }.sumOf { artifact ->
-                    artifact.type.score
+                val score = artifacts.sumOf { artifact ->
+                    if (player.hasCollisionWith(artifact)) {
+                        soundRepository.playSuccessSound()
+                        artifact.type.score
+                    } else 0
                 }
 
                 artifacts.removeAll { artifact ->
-                    player.hasCollisionWith(artifact)
+                    artifact.x <= -artifact.sizeX * 2 || player.hasCollisionWith(artifact)
                 }
+
+                println(artifacts.size)
 
                 if (playerJumpCounter > 0) {
                     playerJumpCounter = max(0, playerJumpCounter - pixelSpeed)
@@ -114,16 +108,18 @@ class LocalPlayGameController(
 
                 GameState(
                     isRunning = true,
-                    backgroundOffset1 = if (gameState.backgroundOffset1 <= -fieldWidth + pixelSpeed) {
-                        fieldWidth
-                    } else {
-                        gameState.backgroundOffset1 - pixelSpeed
-                    },
-                    backgroundOffset2 = if (gameState.backgroundOffset2 <= -fieldWidth + pixelSpeed) {
-                        fieldWidth
-                    } else {
-                        gameState.backgroundOffset2 - pixelSpeed
-                    },
+                    background = gameState.background.copy(
+                        x = if (gameState.background.x <= -fieldWidth + pixelSpeed) {
+                            fieldWidth
+                        } else {
+                            gameState.background.x - pixelSpeed
+                        },
+                        y = if (gameState.background.y <= -fieldWidth + pixelSpeed) {
+                            fieldWidth
+                        } else {
+                            gameState.background.y - pixelSpeed
+                        }
+                    ),
                     score = gameState.score + score,
                     player = player,
                     artifacts = artifacts,

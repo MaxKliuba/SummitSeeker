@@ -11,9 +11,7 @@ import com.smte.skeererer.feature.playgame.domain.model.GameScore
 import com.smte.skeererer.feature.playgame.domain.repository.GameScoreRepository
 import com.smte.skeererer.feature.playgame.domain.repository.SoundRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.Date
 import javax.inject.Inject
@@ -41,14 +39,12 @@ class PlayViewModel @Inject constructor(
     }
 
     fun playGame(fieldWidth: Int, fieldHeight: Int) {
-        playGameController.play(fieldWidth, fieldHeight)
-            .onEach { gameState ->
-                _uiState.update { it.copy(gameState = gameState) }
-            }
-            .catch { e ->
-                e.printStackTrace()
-            }
-            .launchIn(viewModelScope)
+        viewModelScope.launch {
+            playGameController.play(fieldWidth, fieldHeight)
+                .collectLatest { gameState ->
+                    _uiState.update { it.copy(gameState = gameState) }
+                }
+        }
     }
 
     fun saveScore() {

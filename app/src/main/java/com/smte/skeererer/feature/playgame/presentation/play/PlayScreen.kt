@@ -2,32 +2,37 @@ package com.smte.skeererer.feature.playgame.presentation.play
 
 import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.smte.skeererer.R
 import com.smte.skeererer.core.gillSansBoldFontFamily
+import com.smte.skeererer.feature.playgame.domain.model.ArtifactType
 import com.smte.skeererer.feature.playgame.presentation.components.BackIconButton
-import com.smte.skeererer.feature.playgame.presentation.play.components.ArtifactComponent
 import com.smte.skeererer.feature.playgame.presentation.play.components.GameBackgroundBox
 import com.smte.skeererer.feature.playgame.presentation.play.components.GamePauseIconButton
 import com.smte.skeererer.feature.playgame.presentation.play.components.GamePlayIconButton
 import com.smte.skeererer.feature.playgame.presentation.play.components.PauseMenuComponent
-import com.smte.skeererer.feature.playgame.presentation.play.components.PlayerComponent
 
 @Composable
 fun PlayScreen(
@@ -39,40 +44,61 @@ fun PlayScreen(
 
     val configuration = LocalConfiguration.current
 
+    val playerImage = ImageBitmap.imageResource(id = R.drawable.player_run)
+    val coinImage = ImageBitmap.imageResource(id = R.drawable.artifact_coin)
+    val starImage = ImageBitmap.imageResource(id = R.drawable.artifact_star)
+    val heartImage = ImageBitmap.imageResource(id = R.drawable.artifact_heart)
+    val diamondImage = ImageBitmap.imageResource(id = R.drawable.artefact_diamond)
+
     BackHandler {
         viewModel.saveScore()
         onNavigateUp()
     }
 
     GameBackgroundBox(
-        originalOffset = state.gameState?.backgroundOffset1 ?: 0,
-        mirroringOffset = state.gameState?.backgroundOffset2 ?: 0,
-        contentModifier = Modifier.onGloballyPositioned {
-            if (state.gameState == null && configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                viewModel.playGame(it.size.width, it.size.height)
+        originalOffset = state.gameState?.background?.x ?: 0,
+        mirroringOffset = state.gameState?.background?.y ?: 0,
+        contentModifier = Modifier
+            .onGloballyPositioned {
+                if (state.gameState == null && configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    viewModel.playGame(it.size.width, it.size.height)
+                }
             }
-        }
-    )
-    {
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onTap = { viewModel.applyJump() }
+                )
+            }
+    ) {
         state.gameState?.let { gameState ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .pointerInput(Unit) {
-                        detectTapGestures(
-                            onTap = { viewModel.applyJump() }
-                        )
-                    }
-            ) {
+            val animatedPlayerY by animateIntAsState(
+                targetValue = gameState.player.y,
+                label = "playerY",
+                animationSpec = spring(stiffness = Spring.StiffnessLow),
+            )
+
+            Canvas(modifier = Modifier.fillMaxSize()) {
                 gameState.artifacts.forEach { artifact ->
-                    key(artifact.id) {
-                        ArtifactComponent(artifact = artifact)
-                    }
+                    drawImage(
+                        image = when (artifact.type) {
+                            ArtifactType.COIN -> coinImage
+                            ArtifactType.STAR -> starImage
+                            ArtifactType.HEART -> heartImage
+                            ArtifactType.DIAMOND -> diamondImage
+                        },
+                        dstOffset = IntOffset(x = artifact.x, y = artifact.y),
+                        dstSize = IntSize(
+                            width = artifact.sizeX,
+                            height = artifact.sizeY,
+                        )
+                    )
                 }
 
-                key(gameState.player.id) {
-                    PlayerComponent(player = gameState.player)
-                }
+                drawImage(
+                    image = playerImage,
+                    dstOffset = IntOffset(x = gameState.player.x, y = animatedPlayerY),
+                    dstSize = IntSize(width = gameState.player.sizeX, gameState.player.sizeY)
+                )
             }
 
             Text(
