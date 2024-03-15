@@ -19,6 +19,7 @@ import kotlin.time.Duration.Companion.milliseconds
 class LocalPlayGameController(
     private val soundRepository: SoundRepository,
 ) : PlayGameController {
+
     private var pause: Boolean = false
     private var playerJumpCounter: Int = 0
 

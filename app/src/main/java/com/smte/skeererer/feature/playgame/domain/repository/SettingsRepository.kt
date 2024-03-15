@@ -6,5 +6,5 @@ interface SettingsRepository {
 
     fun getSoundState(): StateFlow<Boolean>
 
-    suspend fun setSoundState(enabled: Boolean)
+    fun setSoundState(enabled: Boolean)
 }
