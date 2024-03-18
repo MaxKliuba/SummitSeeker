@@ -9,16 +9,19 @@ import com.smte.skeererer.core.update
 import com.smte.skeererer.feature.playgame.data.repository.LocalPlayGameController
 import com.smte.skeererer.feature.playgame.domain.model.GameScore
 import com.smte.skeererer.feature.playgame.domain.repository.GameScoreRepository
+import com.smte.skeererer.feature.playgame.domain.repository.SettingsRepository
 import com.smte.skeererer.feature.playgame.domain.repository.SoundRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
 class PlayViewModel @Inject constructor(
+    settingsRepository: SettingsRepository,
     soundRepository: SoundRepository,
     private val scoreRepository: GameScoreRepository,
 ) : ViewModel() {
@@ -28,6 +31,12 @@ class PlayViewModel @Inject constructor(
     val uiState: State<PlayUiState> = _uiState
 
     private var playJob: Job? = null
+
+    init {
+        viewModelScope.launch {
+            settingsRepository.getSoundState().first()
+        }
+    }
 
     fun applyJump() {
         playGameController.applyPlayerJump()

@@ -1,10 +1,12 @@
 package com.smte.skeererer.feature.playgame.domain.repository
 
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.Flow
 
 interface SettingsRepository {
 
-    fun getSoundState(): StateFlow<Boolean>
+    val currentSoundState: Boolean
 
-    fun setSoundState(enabled: Boolean)
+    fun getSoundState(): Flow<Boolean>
+
+    suspend fun setSoundState(enabled: Boolean)
 }

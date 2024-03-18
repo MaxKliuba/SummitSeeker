@@ -21,7 +21,7 @@ class SettingsViewModel @Inject constructor(
 
     private val _uiState = mutableStateOf(
         SettingsUiState(
-            soundState = settingsRepository.getSoundState().value
+            soundState = settingsRepository.currentSoundState
         )
     )
     val uiState: State<SettingsUiState> = _uiState
