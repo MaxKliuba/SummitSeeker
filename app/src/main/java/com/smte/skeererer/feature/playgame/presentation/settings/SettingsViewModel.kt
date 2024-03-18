@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.smte.skeererer.core.update
 import com.smte.skeererer.feature.playgame.domain.repository.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -25,18 +26,23 @@ class SettingsViewModel @Inject constructor(
     )
     val uiState: State<SettingsUiState> = _uiState
 
+    private var setSoundJob: Job? = null
+    private var fetchSoundJob: Job? = null
+
     init {
         fetchSettings()
     }
 
     fun changeSoundState(enabled: Boolean) {
-        viewModelScope.launch {
+        setSoundJob?.cancel()
+        setSoundJob = viewModelScope.launch {
             settingsRepository.setSoundState(enabled)
         }
     }
 
     private fun fetchSettings() {
-        settingsRepository.getSoundState()
+        fetchSoundJob?.cancel()
+        fetchSoundJob = settingsRepository.getSoundState()
             .onEach { soundState ->
                 _uiState.update { it.copy(soundState = soundState) }
             }

@@ -11,6 +11,7 @@ import com.smte.skeererer.feature.playgame.domain.model.GameScore
 import com.smte.skeererer.feature.playgame.domain.repository.GameScoreRepository
 import com.smte.skeererer.feature.playgame.domain.repository.SoundRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.Date
@@ -26,6 +27,8 @@ class PlayViewModel @Inject constructor(
     private val _uiState: MutableState<PlayUiState> = mutableStateOf(PlayUiState(gameState = null))
     val uiState: State<PlayUiState> = _uiState
 
+    private var playJob: Job? = null
+
     fun applyJump() {
         playGameController.applyPlayerJump()
     }
@@ -38,8 +41,15 @@ class PlayViewModel @Inject constructor(
         playGameController.resume()
     }
 
-    fun playGame(fieldWidth: Int, fieldHeight: Int) {
-        viewModelScope.launch {
+    fun restartGame() {
+        _uiState.value.gameState?.let { gameState ->
+            startGame(gameState.background.sizeX, gameState.background.sizeY)
+        }
+    }
+
+    fun startGame(fieldWidth: Int, fieldHeight: Int) {
+        playJob?.cancel()
+        playJob = viewModelScope.launch {
             playGameController.play(fieldWidth, fieldHeight)
                 .collectLatest { gameState ->
                     _uiState.update { it.copy(gameState = gameState) }

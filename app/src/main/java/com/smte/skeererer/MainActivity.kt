@@ -57,7 +57,7 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable(route = Screen.Play.route) {
-                            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
                             PlayScreen(
                                 onNavigateUp = navController::navigateUp,
                                 onNavigateToSettings = { navController.navigate(Screen.Settings.route) },

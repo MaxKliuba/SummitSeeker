@@ -5,4 +5,5 @@ enum class ArtifactType(val score: Int) {
     STAR(2),
     HEART(5),
     DIAMOND(10),
+    ROCK(0),
 }

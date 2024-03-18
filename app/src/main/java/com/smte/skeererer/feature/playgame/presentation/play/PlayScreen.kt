@@ -48,7 +48,8 @@ fun PlayScreen(
     val coinImage = ImageBitmap.imageResource(id = R.drawable.artifact_coin)
     val starImage = ImageBitmap.imageResource(id = R.drawable.artifact_star)
     val heartImage = ImageBitmap.imageResource(id = R.drawable.artifact_heart)
-    val diamondImage = ImageBitmap.imageResource(id = R.drawable.artefact_diamond)
+    val diamondImage = ImageBitmap.imageResource(id = R.drawable.artifact_diamond)
+    val rockImage = ImageBitmap.imageResource(id = R.drawable.artifact_rock)
 
     BackHandler {
         viewModel.saveScore()
@@ -61,7 +62,7 @@ fun PlayScreen(
         contentModifier = Modifier
             .onGloballyPositioned {
                 if (state.gameState == null && configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    viewModel.playGame(it.size.width, it.size.height)
+                    viewModel.startGame(it.size.width, it.size.height)
                 }
             }
             .pointerInput(Unit) {
@@ -78,6 +79,12 @@ fun PlayScreen(
             )
 
             Canvas(modifier = Modifier.fillMaxSize()) {
+                drawImage(
+                    image = playerImage,
+                    dstOffset = IntOffset(x = gameState.player.x, y = animatedPlayerY),
+                    dstSize = IntSize(width = gameState.player.sizeX, gameState.player.sizeY)
+                )
+
                 gameState.artifacts.forEach { artifact ->
                     drawImage(
                         image = when (artifact.type) {
@@ -85,6 +92,7 @@ fun PlayScreen(
                             ArtifactType.STAR -> starImage
                             ArtifactType.HEART -> heartImage
                             ArtifactType.DIAMOND -> diamondImage
+                            ArtifactType.ROCK -> rockImage
                         },
                         dstOffset = IntOffset(x = artifact.x, y = artifact.y),
                         dstSize = IntSize(
@@ -93,12 +101,6 @@ fun PlayScreen(
                         )
                     )
                 }
-
-                drawImage(
-                    image = playerImage,
-                    dstOffset = IntOffset(x = gameState.player.x, y = animatedPlayerY),
-                    dstSize = IntSize(width = gameState.player.sizeX, gameState.player.sizeY)
-                )
             }
 
             Text(
@@ -130,7 +132,7 @@ fun PlayScreen(
             )
         } else {
             GamePlayIconButton(
-                onClick = viewModel::resumeGame,
+                onClick = if (state.gameState?.isGameOver == false) viewModel::resumeGame else viewModel::restartGame,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(16.dp)

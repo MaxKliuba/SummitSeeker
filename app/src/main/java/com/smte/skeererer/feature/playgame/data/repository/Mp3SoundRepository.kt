@@ -18,6 +18,7 @@ class Mp3SoundRepository @Inject constructor(
         .build()
     private val jumpSoundId = soundPool.load(context, R.raw.jump, 1)
     private val successSoundId = soundPool.load(context, R.raw.success, 1)
+    private val gameOverSoundId = soundPool.load(context, R.raw.game_over, 1)
 
     override fun playJumpSound() {
         if (settingsRepository.getSoundState().value) {
@@ -28,6 +29,12 @@ class Mp3SoundRepository @Inject constructor(
     override fun playSuccessSound() {
         if (settingsRepository.getSoundState().value) {
             soundPool.play(successSoundId, 1f, 1f, 1, 0, 1f)
+        }
+    }
+
+    override fun playGameOverSound() {
+        if (settingsRepository.getSoundState().value) {
+            soundPool.play(gameOverSoundId, 1f, 1f, 2, 0, 1f)
         }
     }
 }

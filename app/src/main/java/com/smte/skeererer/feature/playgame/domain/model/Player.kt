@@ -15,8 +15,8 @@ class Player(
     ): Player = Player(x, y, sizeX, sizeY)
 
     fun hasCollisionWith(other: GameObject): Boolean {
-        val minX1 = x + sizeX
-        val maxX1 = minX1 + 1
+        val minX1 = x + sizeX / 2
+        val maxX1 = x + sizeX
         val minY1 = y
         val maxY1 = y + sizeY
 

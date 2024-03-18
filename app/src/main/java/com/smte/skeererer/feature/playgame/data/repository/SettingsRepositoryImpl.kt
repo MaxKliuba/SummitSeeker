@@ -37,7 +37,7 @@ class SettingsRepositoryImpl @Inject constructor(
         }
     }.stateIn(
         scope = CoroutineScope(Dispatchers.IO),
-        started = SharingStarted.Lazily,
+        started = SharingStarted.Eagerly,
         initialValue = sharedPreferences.getBoolean(SOUND_STATE_KEY, true),
     )
 

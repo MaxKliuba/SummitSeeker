@@ -5,4 +5,6 @@ interface SoundRepository {
     fun playJumpSound()
 
     fun playSuccessSound()
+
+    fun playGameOverSound()
 }
