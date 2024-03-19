@@ -1,8 +1,11 @@
 package com.smte.skeererer.feature.playgame.presentation.menu
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,36 +24,41 @@ fun MenuScreen(
     onQuit: () -> Unit,
 ) {
     MenuBackgroundColumn(horizontalAlignment = Alignment.CenterHorizontally) {
-        Image(
-            painter = painterResource(id = R.drawable.app_title),
-            contentDescription = stringResource(id = R.string.app_name),
-            modifier = Modifier
-                .padding(vertical = 80.dp)
-                .width(300.dp)
-        )
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.verticalScroll(rememberScrollState())
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.app_title),
+                contentDescription = stringResource(id = R.string.app_name),
+                modifier = Modifier
+                    .padding(vertical = 80.dp)
+                    .width(300.dp)
+            )
 
-        MenuButton(
-            text = stringResource(R.string.start_button),
-            onClick = onNavigateToPlay,
-            modifier = Modifier.padding(8.dp)
-        )
+            MenuButton(
+                text = stringResource(R.string.start_button),
+                onClick = onNavigateToPlay,
+                modifier = Modifier.padding(8.dp)
+            )
 
-        MenuButton(
-            text = stringResource(R.string.settings_button),
-            onClick = onNavigateToSettings,
-            modifier = Modifier.padding(8.dp)
-        )
+            MenuButton(
+                text = stringResource(R.string.settings_button),
+                onClick = onNavigateToSettings,
+                modifier = Modifier.padding(8.dp)
+            )
 
-        MenuButton(
-            text = stringResource(R.string.rating_button),
-            onClick = onNavigateToRatings,
-            modifier = Modifier.padding(8.dp)
-        )
+            MenuButton(
+                text = stringResource(R.string.rating_button),
+                onClick = onNavigateToRatings,
+                modifier = Modifier.padding(8.dp)
+            )
 
-        MenuButton(
-            text = stringResource(R.string.exit_button),
-            onClick = onQuit,
-            modifier = Modifier.padding(8.dp)
-        )
+            MenuButton(
+                text = stringResource(R.string.exit_button),
+                onClick = onQuit,
+                modifier = Modifier.padding(8.dp)
+            )
+        }
     }
 }

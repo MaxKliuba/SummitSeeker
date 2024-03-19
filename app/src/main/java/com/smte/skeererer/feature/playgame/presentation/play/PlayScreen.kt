@@ -131,16 +131,19 @@ fun PlayScreen(
                     .padding(16.dp)
             )
         } else {
-            GamePlayIconButton(
-                onClick = if (state.gameState?.isGameOver == false) viewModel::resumeGame else viewModel::restartGame,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(16.dp)
-            )
+            if (state.gameState?.isGameOver == false) {
+                GamePlayIconButton(
+                    onClick = viewModel::resumeGame,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(16.dp)
+                )
+            }
 
             PauseMenuComponent(
                 onSaveScore = viewModel::saveScore,
                 onNavigateToSettings = onNavigateToSettings,
+                onRestart = if (state.gameState?.isGameOver == true) viewModel::restartGame else null,
                 onNavigateUp = onNavigateUp,
                 modifier = Modifier.align(Alignment.Center)
             )

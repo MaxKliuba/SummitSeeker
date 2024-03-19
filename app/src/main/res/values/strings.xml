@@ -10,7 +10,7 @@
     <string name="back_button">Back</string>
     <string name="pause_button">Pause</string>
     <string name="play_button">Play</string>
-    <string name="restart_button">Restart</string>
+    <string name="restart_button">PLAY AGAIN</string>
     <string name="sound_settings_title">Sound</string>
     <string name="score_title">SCORE: %1$s</string>
 </resources>
