@@ -14,4 +14,20 @@ class Artifact(
         sizeX: Int = this.sizeX,
         sizeY: Int = this.sizeY,
     ): Artifact = Artifact(x, y, sizeX, sizeY, this.type)
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        if (!super.equals(other)) return false
+
+        other as Artifact
+
+        return type == other.type
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + type.hashCode()
+        return result
+    }
 }

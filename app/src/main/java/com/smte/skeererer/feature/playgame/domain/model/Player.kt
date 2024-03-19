@@ -5,6 +5,7 @@ class Player(
     y: Int,
     sizeX: Int,
     sizeY: Int,
+    val state: PlayerState,
 ) : GameObject(x, y, sizeX, sizeY) {
 
     fun copy(
@@ -12,7 +13,8 @@ class Player(
         y: Int = this.y,
         sizeX: Int = this.sizeX,
         sizeY: Int = this.sizeY,
-    ): Player = Player(x, y, sizeX, sizeY)
+        state: PlayerState = this.state,
+    ): Player = Player(x, y, sizeX, sizeY, state)
 
     fun hasCollisionWith(other: GameObject): Boolean {
         val minX1 = x + sizeX / 2
@@ -27,5 +29,21 @@ class Player(
 
         return !(minX1 > maxX2 || maxX1 < minX2 ||
                 minY1 > maxY2 || maxY1 < minY2)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        if (!super.equals(other)) return false
+
+        other as Player
+
+        return state == other.state
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + state.hashCode()
+        return result
     }
 }

@@ -2,7 +2,6 @@ package com.smte.skeererer.feature.playgame.presentation.play
 
 import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
@@ -28,6 +27,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.smte.skeererer.R
 import com.smte.skeererer.core.gillSansBoldFontFamily
 import com.smte.skeererer.feature.playgame.domain.model.ArtifactType
+import com.smte.skeererer.feature.playgame.domain.model.PlayerState
 import com.smte.skeererer.feature.playgame.presentation.components.BackIconButton
 import com.smte.skeererer.feature.playgame.presentation.play.components.GameBackgroundBox
 import com.smte.skeererer.feature.playgame.presentation.play.components.GamePauseIconButton
@@ -44,7 +44,8 @@ fun PlayScreen(
 
     val configuration = LocalConfiguration.current
 
-    val playerImage = ImageBitmap.imageResource(id = R.drawable.player_run)
+    val playerRImage = ImageBitmap.imageResource(id = R.drawable.player_run_r)
+    val playerLImage = ImageBitmap.imageResource(id = R.drawable.player_run_l)
     val coinImage = ImageBitmap.imageResource(id = R.drawable.artifact_coin)
     val starImage = ImageBitmap.imageResource(id = R.drawable.artifact_star)
     val heartImage = ImageBitmap.imageResource(id = R.drawable.artifact_heart)
@@ -75,12 +76,16 @@ fun PlayScreen(
             val animatedPlayerY by animateIntAsState(
                 targetValue = gameState.player.y,
                 label = "playerY",
-                animationSpec = spring(stiffness = Spring.StiffnessLow),
+                animationSpec = spring(stiffness = 150f),
             )
 
             Canvas(modifier = Modifier.fillMaxSize()) {
                 drawImage(
-                    image = playerImage,
+                    image = when (gameState.player.state) {
+                        PlayerState.RUN_RIGHT,
+                        PlayerState.JUMP -> playerRImage
+                        PlayerState.RUN_LEFT -> playerLImage
+                    },
                     dstOffset = IntOffset(x = gameState.player.x, y = animatedPlayerY),
                     dstSize = IntSize(width = gameState.player.sizeX, gameState.player.sizeY)
                 )

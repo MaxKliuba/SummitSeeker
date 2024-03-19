@@ -5,6 +5,7 @@ import com.smte.skeererer.feature.playgame.domain.model.ArtifactType
 import com.smte.skeererer.feature.playgame.domain.model.GameBackground
 import com.smte.skeererer.feature.playgame.domain.model.GameState
 import com.smte.skeererer.feature.playgame.domain.model.Player
+import com.smte.skeererer.feature.playgame.domain.model.PlayerState
 import com.smte.skeererer.feature.playgame.domain.repository.PlayGameController
 import com.smte.skeererer.feature.playgame.domain.repository.SoundRepository
 import kotlinx.coroutines.Dispatchers
@@ -26,7 +27,7 @@ class LocalPlayGameController(
         playerJumpCounter = 0
 
         val period = 4
-        val pixelSpeed = 3
+        val pixelSpeed = 4
         val stepCount = 3
         val step = fieldHeight / stepCount
         val bottomOffset = step / 8
@@ -60,11 +61,13 @@ class LocalPlayGameController(
                 y = playerRunY,
                 sizeX = playerSizeX,
                 sizeY = playerY,
+                state = PlayerState.RUN_RIGHT,
             ),
             artifacts = emptyList(),
         )
 
         var timer = System.currentTimeMillis()
+        var runTimer = System.currentTimeMillis()
 
         while (!gameState.isGameOver) {
             if (System.currentTimeMillis() - timer < period) continue
@@ -75,11 +78,27 @@ class LocalPlayGameController(
                 gameState.copy(isRunning = false)
             } else {
                 val player =
-                    if (playerJumpCounter >= AFTER_JUMP_DELAY && gameState.player.y != playerJumpY) {
-                        gameState.player.copy(y = playerJumpY)
-                    } else if (playerJumpCounter < AFTER_JUMP_DELAY && gameState.player.y != playerRunY) {
-                        gameState.player.copy(y = playerRunY)
-                    } else gameState.player
+                    if (playerJumpCounter >= AFTER_JUMP_DELAY) {
+                        gameState.player.copy(
+                            y = playerJumpY,
+                            state = PlayerState.JUMP,
+                        )
+                    } else {
+                        gameState.player.copy(
+                            y = playerRunY,
+                            state = if (System.currentTimeMillis() - runTimer >= period * 40) {
+                                runTimer = System.currentTimeMillis()
+                                when (gameState.player.state) {
+                                    PlayerState.RUN_RIGHT -> PlayerState.RUN_LEFT
+                                    PlayerState.RUN_LEFT -> PlayerState.RUN_RIGHT
+                                    PlayerState.JUMP -> PlayerState.RUN_LEFT
+                                }
+                            } else {
+                                gameState.player.state
+
+                            },
+                        )
+                    }
 
                 val artifacts = gameState.artifacts.map { artifact ->
                     artifact.copy(x = artifact.x - pixelSpeed)
@@ -170,7 +189,7 @@ class LocalPlayGameController(
     }
 
     companion object {
-        private const val JUMP_DURATION = 650
-        private const val AFTER_JUMP_DELAY = 200
+        private const val JUMP_DURATION = 800
+        private const val AFTER_JUMP_DELAY = 100
     }
 }
